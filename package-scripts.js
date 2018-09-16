@@ -31,6 +31,10 @@ module.exports = {
         description: 'Runs tslint in fix mode.',
       },
     },
+    check: {
+      script: 'nps lint && nps test',
+      description: 'Runs the checks to validate the application (test & lint).',
+    },
     css: {
       types: {
         script: 'tcm -p \'./src/**/*.css\'',
@@ -39,6 +43,22 @@ module.exports = {
           script: 'nps "css.types -w"',
           description: 'Generates typescript typings for css modules in watch mode.',
         },
+      },
+    },
+    graphql: {
+      script: 'nps graphql.download graphql.types && nps graphql.schema',
+      description: 'Downloads the newest schema and generates typedefs for app queries.',
+      download: {
+        script: 'apollo schema:download',
+        description: 'Downloads the introspection result for the graphql endpoint.'
+      },
+      schema: {
+        script: 'node ./scripts/printSchema.js',
+        description: 'Generates `schema.graphql` from `schema.json`.',
+      },
+      types: {
+        script: 'apollo codegen:generate --target typescript',
+        description: 'Generates types from graphql queries.',
       },
     },
   },
