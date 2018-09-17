@@ -1,7 +1,7 @@
 
 import { autorun, set, toJS } from 'mobx'
 
-const autoSave = <Prop, K extends string & keyof Prop>(name: K) => <T>(mobxStore: T) => {
+const autoSave = <Prop>(name: string & keyof Prop) => <T>(mobxStore: T) => {
   let firstRun = true
 
   // will run on change
