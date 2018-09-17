@@ -46,7 +46,7 @@ module.exports = {
       },
     },
     graphql: {
-      script: 'nps graphql.download graphql.types && nps graphql.schema',
+      script: 'nps graphql.download graphql.types graphql.schema',
       description: 'Downloads the newest schema and generates typedefs for app queries.',
       download: {
         script: 'apollo schema:download',
