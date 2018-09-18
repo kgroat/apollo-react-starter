@@ -9,7 +9,7 @@ import { Me, Me_me } from './__generated__/Me'
 import { Login, LoginVariables } from './__generated__/Login'
 
 export interface AuthProp {
-  auth: AuthStore
+  auth?: AuthStore
 }
 
 class AuthStore {
@@ -62,6 +62,4 @@ class AuthStore {
   }
 }
 
-const authStore = autoSave<AuthProp>('auth')(new AuthStore())
-
-export default authStore
+export const auth = autoSave<AuthProp>('auth')(new AuthStore())

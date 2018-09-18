@@ -1,19 +1,21 @@
 
 import * as React from 'react'
 import { Provider } from 'mobx-react'
-import {
-  AuthProp,
-  default as auth,
-} from './authStore/authStore'
+
+import { AuthProp, auth } from './authStore'
+import { DrawerProp, drawer } from './drawerStore'
 
 interface Props {
   children?: React.ReactNode,
 }
 
-type ProviderProps = AuthProp
+type ProviderProps =
+  & Required<AuthProp>
+  & Required<DrawerProp>
 
 const stores: ProviderProps = {
   auth,
+  drawer,
 }
 
 const MobxProvider = ({ children }: Props) => (

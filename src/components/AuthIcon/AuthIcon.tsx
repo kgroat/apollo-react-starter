@@ -5,10 +5,9 @@ import IconButton from '@material-ui/core/IconButton'
 import AccountCircle from '@material-ui/icons/AccountCircle'
 import MenuItem from '@material-ui/core/MenuItem'
 import Menu from '@material-ui/core/Menu'
+import { AuthProp } from 'state/authStore'
 
-import { AuthProp } from 'state/authStore/authStore'
-
-interface BaseProps extends Partial<AuthProp> {
+interface BaseProps extends AuthProp {
 }
 
 interface State {

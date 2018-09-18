@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography'
 import Input from '@material-ui/core/Input'
 import SearchIcon from '@material-ui/icons/Search'
 import { fade } from '@material-ui/core/styles/colorManipulator'
-import { RouteProps } from '../../Router/AppBar'
+import { RouteProps } from 'components/AppBar/AppBar'
 
 interface Classes {
   grow: string

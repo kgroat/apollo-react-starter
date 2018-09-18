@@ -8,6 +8,7 @@ interface RouteDefinition {
   appBar?: React.ComponentType
   key?: string
   exact?: boolean
+  padding?: boolean // default = true
 }
 
 const routeDefs = {
@@ -16,6 +17,7 @@ const routeDefs = {
     component: Home,
     appBar: HomeAppBar,
     exact: true,
+    padding: false,
   },
   login: {
     path: '/login',
