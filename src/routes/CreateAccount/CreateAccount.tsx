@@ -8,16 +8,16 @@ import CardActions from '@material-ui/core/CardActions'
 import FormControl from '@material-ui/core/FormControl'
 import Input from '@material-ui/core/Input'
 import InputLabel from '@material-ui/core/InputLabel'
+import Tooltip from '@material-ui/core/Tooltip'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import Snackbar from '@material-ui/core/Snackbar'
 import SnackbarContent from '@material-ui/core/SnackbarContent'
 import CloseIcon from '@material-ui/icons/Close'
-import ErrorIcon from '@material-ui/icons/Error'
-import { FetchResultError } from 'errors'
 import { pushOrReplace } from 'helpers/navigation'
-import { AuthProp } from 'state/authStore'
 import { routes } from 'routes'
+import { FetchResultError } from 'errors'
+import { AuthProp } from 'state/authStore'
 
 interface Props extends AuthProp {
   classes: Classes
@@ -25,54 +25,35 @@ interface Props extends AuthProp {
 
 interface Classes {
   card: string
-  actions: string
-  button: string
   errorSnackbar: string
-  snackbarContent: string
-  snackbarIcon: string
 }
 
 const styled = withStyles(theme => ({
   card: {
     minWidth: 300,
   },
-  actions: {
-    display: 'flex',
-    flexDirection: 'row',
-    [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column',
-    },
-  },
-  button: {
-    margin: theme.spacing.unit / 2,
-  },
   errorSnackbar: {
     background: theme.palette.error.dark,
-  },
-  snackbarContent: {
-    display: 'flex',
-    alignItems: 'center',
-    fontSize: 20,
-  },
-  snackbarIcon: {
-    fontSize: 20,
-    marginRight: theme.spacing.unit,
   },
 }))
 
 interface State {
   username: string
   password: string
+  verifyPassword: string
+  verifyPasswordDirty: boolean
   submitting: boolean
   errors: { open: boolean, message: string }[]
 }
 
 @inject('auth')
 @observer
-class Login extends React.Component<Props, State> {
+class CreateAccount extends React.Component<Props, State> {
   state: State = {
     username: '',
     password: '',
+    verifyPassword: '',
+    verifyPasswordDirty: false,
     submitting: false,
     errors: [],
   }
@@ -82,14 +63,18 @@ class Login extends React.Component<Props, State> {
     const {
       username,
       password,
+      verifyPassword,
+      verifyPasswordDirty,
       submitting,
       errors,
     } = this.state
 
+    const showVerifyError = verifyPasswordDirty && password !== verifyPassword
+
     return (
-      <form onSubmit={this.login}>
+      <form onSubmit={this.createAccount}>
         <Card className={classes.card}>
-          <CardHeader title='Login' />
+          <CardHeader title='Create Account' />
           <CardContent>
             <FormControl margin='normal' required fullWidth>
               <InputLabel htmlFor='username'>Username</InputLabel>
@@ -111,25 +96,37 @@ class Login extends React.Component<Props, State> {
                 onChange={this.onPasswordChange}
               />
             </FormControl>
+            <FormControl margin='normal' required fullWidth>
+              {
+                showVerifyError
+                  ? <Tooltip title='Passwords must match'>
+                      <InputLabel htmlFor='verifyPassword' error>
+                        Verify Password
+                      </InputLabel>
+                    </Tooltip>
+                  : <InputLabel htmlFor='verifyPassword'>
+                      Verify Password
+                    </InputLabel>
+              }
+              <Input
+                id='verifyPassword'
+                name='verifyPassword'
+                type='password'
+                error={showVerifyError}
+                value={verifyPassword}
+                onChange={this.onVerifyPasswordChange}
+              />
+            </FormControl>
           </CardContent>
-          <CardActions classes={{ root: classes.actions }} disableActionSpacing>
+          <CardActions>
             <Button
-              className={classes.button}
               type='submit'
               fullWidth
-              disabled={submitting}
               variant='raised'
               color='primary'
+              disabled={submitting}
             >
-              Login
-            </Button>
-            <Button
-              className={classes.button}
-              fullWidth
-              variant='raised'
-              onClick={() => pushOrReplace(routes.createAccount.path)}
-            >
-              Create an account
+              Create Account
             </Button>
           </CardActions>
         </Card>
@@ -142,12 +139,7 @@ class Login extends React.Component<Props, State> {
             >
               <SnackbarContent
                 className={classes.errorSnackbar}
-                message={(
-                  <span className={classes.snackbarContent}>
-                    <ErrorIcon className={classes.snackbarIcon} />
-                    {message}
-                  </span>
-                )}
+                message={message}
                 action={[
                   <IconButton
                     key='close'
@@ -190,15 +182,24 @@ class Login extends React.Component<Props, State> {
     this.setState({ password })
   }
 
-  private login = async (ev: React.FormEvent<HTMLFormElement>) => {
+  private onVerifyPasswordChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    const verifyPassword = ev.currentTarget.value
+    this.setState({
+      verifyPassword,
+      verifyPasswordDirty: true,
+    })
+  }
+
+  private createAccount = async (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault()
 
     const { auth } = this.props
-    const { username, password } = this.state
+    const { username, password, verifyPassword } = this.state
     this.setState({ submitting: true, errors: [] })
 
     try {
-      await auth!.login({ username, password })
+      await auth!.createAccount({ username, password, verifyPassword })
+      pushOrReplace(routes.login.path)
     } catch (err) {
       let errors = this.state.errors
       if (err instanceof FetchResultError) {
@@ -210,4 +211,4 @@ class Login extends React.Component<Props, State> {
   }
 }
 
-export default styled(Login)
+export default styled(CreateAccount)

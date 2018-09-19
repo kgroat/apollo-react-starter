@@ -23,14 +23,6 @@ class AuthIcon extends React.Component<Props, State> {
     anchorEl: null,
   }
 
-  handleMenu = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    this.setState({ anchorEl: event.currentTarget })
-  }
-
-  handleClose = () => {
-    this.setState({ anchorEl: null })
-  }
-
   render () {
     const { auth } = this.props
     const { anchorEl } = this.state
@@ -63,11 +55,23 @@ class AuthIcon extends React.Component<Props, State> {
           open={!!anchorEl}
           onClose={this.handleClose}
         >
-          <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-          <MenuItem onClick={this.handleClose}>My account</MenuItem>
+          <MenuItem onClick={this.handleLogout}>Log Out</MenuItem>
         </Menu>
       </div>
     )
+  }
+
+  private handleLogout = () => {
+    this.props.auth!.logout()
+    this.handleClose()
+  }
+
+  private handleMenu = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    this.setState({ anchorEl: event.currentTarget })
+  }
+
+  private handleClose = () => {
+    this.setState({ anchorEl: null })
   }
 }
 

@@ -1,15 +1,30 @@
 
 import { GraphQLError } from 'graphql'
-import { FetchResult } from 'apollo-link'
+import { ApolloError } from 'apollo-client'
 
 export class FetchResultError extends Error {
-  errors: GraphQLError[]
+  readonly requestName: string
+  readonly errors: string[] = []
+  readonly graphQLErrors: GraphQLError[] | undefined
 
   constructor (
-    public requestName: string,
-    public result: FetchResult,
+    requestName: string,
+    { graphQLErrors, networkError }: ApolloError,
   ) {
     super(`Graphql request "${requestName}" failed.`)
-    this.errors = result.errors!
+    this.requestName = requestName
+
+    if (graphQLErrors) {
+      this.graphQLErrors = graphQLErrors
+      this.errors.push(...graphQLErrors.map(err => err.message))
+    }
+
+    if (networkError) {
+      this.errors.push(networkError.message)
+    }
+
+    if (this.errors.length === 0) {
+      this.errors.push('Request failed.')
+    }
   }
 }

@@ -15,8 +15,11 @@ const autoSave = <Prop>(name: string & keyof Prop) => <T>(mobxStore: T) => {
       }
     }
 
+    if (!('toJSON' in mobxStore)) {
+      mobxStore = toJS(mobxStore)
+    }
     // from then on serialize and save to localStorage
-    localStorage.setItem(name, JSON.stringify(toJS(mobxStore)))
+    localStorage.setItem(name, JSON.stringify(mobxStore))
   })
 
   firstRun = false

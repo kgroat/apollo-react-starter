@@ -6,7 +6,6 @@ import Typography from '@material-ui/core/Typography'
 import Input from '@material-ui/core/Input'
 import SearchIcon from '@material-ui/icons/Search'
 import { fade } from '@material-ui/core/styles/colorManipulator'
-import { RouteProps } from 'components/AppBar/AppBar'
 
 interface Classes {
   grow: string
@@ -70,13 +69,12 @@ const styled = withStyles((theme) => ({
   },
 }))
 
-interface Props extends RouteProps {
+interface Props {
   classes: Classes
 }
 
-const HomeAppBar = ({ classes, authIcon, menuIcon }: Props) => (
-  <Toolbar>
-    {menuIcon}
+const HomeAppBar = ({ classes }: Props) => (
+  <React.Fragment>
     <Typography className={classes.title} variant='title' color='inherit' noWrap>
       Apollo React Starter
     </Typography>
@@ -94,8 +92,7 @@ const HomeAppBar = ({ classes, authIcon, menuIcon }: Props) => (
         }}
       />
     </div>
-    {authIcon}
-  </Toolbar>
+  </React.Fragment>
 )
 
 export default styled(HomeAppBar)

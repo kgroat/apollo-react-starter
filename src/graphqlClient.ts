@@ -1,13 +1,32 @@
 
 import { ApolloClient } from 'apollo-client'
+import { split } from 'apollo-link'
 import { HttpLink } from 'apollo-link-http'
+import { WebSocketLink } from 'apollo-link-ws'
+import { getMainDefinition } from 'apollo-utilities'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { setContext } from 'apollo-link-context'
 import { auth } from 'state/authStore'
 
+const wsLink = new WebSocketLink({
+  uri: process.env.GRAPHQL_SUBSCRIPTION_URL || 'ws://localhost/graphql',
+  options: {
+    reconnect: true,
+  },
+})
+
 const httpLink = new HttpLink({
   uri: process.env.GRAPHQL_URL,
 })
+
+const link = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query as any)
+    return definition.kind === 'OperationDefinition' && definition.operation === 'subscription'
+  },
+  wsLink as any,
+  httpLink as any,
+)
 
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from the authStore
@@ -22,7 +41,7 @@ const authLink = setContext((_, { headers }) => {
 })
 
 const graphqlClient = new ApolloClient({
-  link: authLink.concat(httpLink),
+  link: authLink.concat(link),
   cache: new InMemoryCache(),
   defaultOptions: {
     watchQuery: {
@@ -30,7 +49,7 @@ const graphqlClient = new ApolloClient({
       notifyOnNetworkStatusChange: true,
     },
     query: {
-      fetchPolicy: 'cache-and-network',
+      fetchPolicy: 'network-only',
     },
   },
 })

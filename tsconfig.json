@@ -21,6 +21,8 @@
     "paths": {
       "components/*": ["src/components/*"],
       "errors": ["src/errors"],
+      "helpers/*": ["src/helpers/*"],
+      "routes": ["src/routes/index.ts"],
       "routes/*": ["src/routes/*"],
       "Router/*": ["src/Router/*"],
       "state/*": ["src/state/*"],

@@ -1,6 +1,5 @@
 
 import * as React from 'react'
-import { withRouter, RouteComponentProps } from 'react-router'
 import { observer, inject } from 'mobx-react'
 import { withStyles } from '@material-ui/core'
 import Drawer from '@material-ui/core/Drawer'
@@ -9,12 +8,14 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import LockIcon from '@material-ui/icons/Lock'
+import { routes } from 'routes'
+import { pushOrReplace } from 'helpers/navigation'
 import { DrawerProp } from 'state/drawerStore'
 
 interface BaseProps {
 }
 
-interface Props extends BaseProps, DrawerProp, RouteComponentProps {
+interface Props extends BaseProps, DrawerProp {
   classes: Classes
 }
 
@@ -94,11 +95,9 @@ class AppDrawer extends React.Component<Props> {
   }
 
   private renderContent () {
-    const { history } = this.props
-
     return (
       <React.Fragment>
-        <ListItem button onClick={() => history.push('/login')}>
+        <ListItem button onClick={this.goToLogin}>
           <ListItemIcon>
             <LockIcon />
           </ListItemIcon>
@@ -107,6 +106,15 @@ class AppDrawer extends React.Component<Props> {
       </React.Fragment>
     )
   }
+
+  private goToLogin = () => {
+    pushOrReplace(routes.login.path)
+    this.closeDrawer()
+  }
+
+  private closeDrawer () {
+    this.props.drawer!.toggleDrawer(false)
+  }
 }
 
-export default styled(withRouter(AppDrawer))
+export default styled(AppDrawer)
